@@ -1,0 +1,16 @@
+Flask==3.0.3
+Flask-Migrate==4.0.5
+Flask-Session==0.4.0
+flask_sqlalchemy==3.0.3
+sqlalchemy==2.0.40
+sqlalchemy_utils==0.37.8
+pydantic[email]==2.6.4
+requests==2.32.3
+geopy==2.3.0
+python-dotenv==1.0.1
+pymysql==1.0.3
+pytest
+icecream
+flask-smorest
+apispec[yaml]==6.3.1
+tenacity==8.2.2

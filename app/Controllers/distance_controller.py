@@ -1,12 +1,12 @@
 from flask import jsonify, request
 from flask_smorest import Blueprint, abort
-from app.services.distance_service import DistanceService
 from app.clients.geocoding_client import GeocodingClient
 from app.db.session import get_db
 from app.schemas.api_schemas import DistanceRequestSchema, DistanceResponseSchema
 from contextlib import contextmanager
 import logging
 from app.repositories.distance_repository import DistanceRepository
+from app.services.distance_service import DistanceService
 
 logger = logging.getLogger(__name__)
 
@@ -63,16 +63,9 @@ class DistanceController:
 
 
 # Dependency Injection Setup
-def create_distance_controller(geocoding_client: GeocodingClient) -> DistanceController:
+def create_distance_controller(distance_service: DistanceService) -> DistanceController:
     """Factory function to create a DistanceController with its dependencies."""
-    @contextmanager
-    def db_session_provider():
-        db = next(get_db())
-        try:
-            yield db
-        finally:
-            db.close()
-
-    distance_repository = DistanceRepository(db_session_provider)
-    distance_service = DistanceService(geocoding_client, distance_repository)
+    if not distance_service:
+        raise ValueError("DistanceService is required")
+    
     return DistanceController(distance_service).blueprint

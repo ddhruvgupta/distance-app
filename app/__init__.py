@@ -6,6 +6,7 @@ import os
 import logging
 
 from app.clients.geocoding_client import GeocodingClient
+from app.repositories.distance_repository import DistanceRepository
 
 logging.basicConfig(
     level=logging.INFO,  # Set the log level to INFO
@@ -52,14 +53,17 @@ def create_app():
 
     # Initialize services
     from app.services.history_service import HistoryService
+    from app.services.distance_service import DistanceService
     history_service = HistoryService()
     geocoding_client = GeocodingClient()
+    distance_repo = DistanceRepository()
+    distance_service = DistanceService(geocoding_client, distance_repo)
 
     # Import and register blueprints
     from app.Controllers.distance_controller import create_distance_controller
     from app.Controllers.history_controller import create_history_controller
     history_bp = create_history_controller(history_service)
-    distance_bp = create_distance_controller(geocoding_client)
+    distance_bp = create_distance_controller(distance_service)
 
     api.register_blueprint(distance_bp)
     api.register_blueprint(history_bp)

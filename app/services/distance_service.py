@@ -29,6 +29,5 @@ class DistanceService:
 
         # Delegate logging to the repository
         self.distance_repository.log_distance_query(address1, address2, distance)
-
-        ic(distance)  # Log the distance for debugging purposes
+        ic(distance)
         return distance

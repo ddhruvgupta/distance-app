@@ -1,0 +1,21 @@
+# Exclude node_modules
+node_modules
+
+# Exclude log files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Exclude local environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Exclude build artifacts
+build
+
+# Exclude other unnecessary files
+.DS_Store
+coverage

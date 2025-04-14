@@ -4,11 +4,11 @@ FROM node:18-alpine AS build
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy only package.json and package-lock.json to leverage Docker caching
 COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --production
 
 # Copy the rest of the application code
 COPY . .

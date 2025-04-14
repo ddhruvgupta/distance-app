@@ -19,5 +19,5 @@ COPY tests/ tests/
 COPY migrations/ migrations/
 COPY pytest.ini .
 
-# Command to run the application
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Command to run the application using Gunicorn
+CMD ["sh", "-c", "flask db upgrade && gunicorn -b 0.0.0.0:5000 'app:create_app()'"]

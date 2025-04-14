@@ -19,7 +19,8 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={r"/*": {"origins": ["http://localhost:3000"]}})
+    # CORS(app, resources={r"/*": {"origins": ["http://localhost:3000"]}})
+    CORS(app)
 
     # Database configuration
     database_url = os.getenv("DATABASE_URL")

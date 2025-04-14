@@ -1,4 +1,4 @@
-Flask==3.0.3
+Flask
 Flask-Migrate==4.0.5
 Flask-Session==0.4.0
 flask_sqlalchemy==3.0.3
@@ -15,3 +15,4 @@ flask-smorest
 apispec[yaml]==6.3.1
 tenacity==8.2.2
 flask-cors==4.0.0
+gunicorn

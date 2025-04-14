@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import {
   Box,
   Typography,
@@ -13,98 +13,124 @@ import {
   Button,
 } from '@mui/material';
 import CalculateIcon from '@mui/icons-material/Calculate';
-import { useNavigate } from 'react-router-dom';
-import fetchHistory from '../api_endpoints/history_endpoint'; // Import the API function
+import fetchHistory from '../api_endpoints/history_endpoint';
+import withNavigation from '../utils/withNavigation';
 
-function History() {
-  const [historyData, setHistoryData] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalRows, setTotalRows] = useState(0);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadHistory = async () => {
-      try {
-        const data = await fetchHistory(page, rowsPerPage);
-        setHistoryData(data.results);
-        setTotalRows(data.total_count); // Use total_count from the API response
-      } catch (error) {
-        console.error('Error loading history:', error);
-      }
+class History extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      historyData: [],
+      page: 0,
+      rowsPerPage: 10,
+      totalRows: 0,
     };
+  }
 
-    loadHistory();
-  }, [page, rowsPerPage]);
+  componentDidMount() {
+    this.loadHistory();
+  }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.page !== this.state.page ||
+      prevState.rowsPerPage !== this.state.rowsPerPage
+    ) {
+      this.loadHistory();
+    }
+  }
+
+  async loadHistory() {
+    const { page, rowsPerPage } = this.state;
+    try {
+      const data = await fetchHistory(page, rowsPerPage);
+      this.setState({
+        historyData: data.results,
+        totalRows: data.total_count,
+      });
+    } catch (error) {
+      console.error('Error loading history:', error);
+    }
+  }
+
+  handleChangePage = (event, newPage) => {
+    this.setState({ page: newPage });
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset to the first page
+  handleChangeRowsPerPage = (event) => {
+    this.setState({
+      rowsPerPage: parseInt(event.target.value, 10),
+      page: 0, // Reset to the first page
+    });
   };
 
-  return (
-    <Box sx={{ mt: 6, px: 4 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h4" component="h1">
-          Distance Calculator
-        </Typography>
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<CalculateIcon />}
-          onClick={() => navigate('/')}
-        >
-          Back to Calculator
-        </Button>
-      </Box>
+  navigateToCalculator = () => {
+    this.props.navigate('/'); // Use the injected `navigate` function
+  };
 
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Historical Queries
-        </Typography>
-        <Typography variant="body2" color="text.secondary" gutterBottom>
-          History of the user's queries.
-        </Typography>
+  render() {
+    const { historyData, page, rowsPerPage, totalRows } = this.state;
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Source Address</TableCell>
-                <TableCell>Destination Address</TableCell>
-                <TableCell>Distance in Miles</TableCell>
-                <TableCell>Distance in Kilometers</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {historyData.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.address1}</TableCell> {/* Use address1 */}
-                  <TableCell>{row.address2}</TableCell> {/* Use address2 */}
-                  <TableCell>{row.distance.toFixed(2)}</TableCell> {/* Use distance */}
-                  <TableCell>{(row.distance * 1.60934).toFixed(2)}</TableCell> {/* Convert to kilometers */}
+    return (
+      <Box sx={{ mt: 6, px: 4 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+          <Typography variant="h4" component="h1">
+            Distance Calculator
+          </Typography>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<CalculateIcon />}
+            onClick={this.navigateToCalculator}
+          >
+            Back to Calculator
+          </Button>
+        </Box>
+
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            Historical Queries
+          </Typography>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            History of the user's queries.
+          </Typography>
+
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Source Address</TableCell>
+                  <TableCell>Destination Address</TableCell>
+                  <TableCell>Distance in Miles</TableCell>
+                  <TableCell>Distance in Kilometers</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {historyData.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.address1}</TableCell>
+                    <TableCell>{row.address2}</TableCell>
+                    <TableCell>{row.distance.toFixed(2)}</TableCell>
+                    <TableCell>{(row.distance * 1.60934).toFixed(2)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-        <TablePagination
-          component="div"
-          count={totalRows}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-        />
-      </Paper>
-    </Box>
-  );
+          <TablePagination
+            component="div"
+            count={totalRows}
+            page={page}
+            onPageChange={this.handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={this.handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+          />
+        </Paper>
+      </Box>
+    );
+  }
 }
 
-export default History;
+export default withNavigation(History);

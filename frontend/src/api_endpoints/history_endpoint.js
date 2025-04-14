@@ -1,15 +1,17 @@
 async function fetchHistory(page, rowsPerPage) {
+
+  const API_BASE_URL = "http://40.90.235.48:5000";
   try {
     const response = await fetch(
-      `http://localhost:5000/history/?page=${page + 1}&limit=${rowsPerPage}`,
-        {
-            method: 'GET',
-            headers: {
-            'Content-Type': 'application/json',
-            'Accept': '*/*',
-            'Connection': 'keep-alive',
-            },
-        }
+      `${API_BASE_URL}/history/?page=${page + 1}&limit=${rowsPerPage}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          'Connection': 'keep-alive',
+        },
+      }
     );
 
     console.log("Response:", response);

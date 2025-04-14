@@ -1,10 +1,8 @@
 async function fetchDistance(address1, address2) {
-    // Validate input parameters
     if (!address1 || !address2) {
         throw new Error('Both address1 and address2 are required');
     }
 
-    // Convert addresses to strings if they aren't already
     const addr1 = String(address1).trim();
     const addr2 = String(address2).trim();
 
@@ -13,10 +11,10 @@ async function fetchDistance(address1, address2) {
         "address1": addr1,
         "address2": addr2
     };
-    
+
     console.log("Request Body:", requestBody);
 
-    const API_BASE_URL = 'http://localhost:5000';
+    const API_BASE_URL = "http://40.90.235.48:5000" || 'http://localhost:5000';
     const response = await fetch(`${API_BASE_URL}/distance/`, {
         method: 'POST',
         headers: {

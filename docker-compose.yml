@@ -17,7 +17,7 @@ services:
   flask:
     build:
       context: .
-    image: ddhruvgupta/distance-flask:latest
+    image: ddhruvgupta/distance-flask:deploy
     environment:
       FLASK_ENV: development
       FLASK_APP: app:create_app
@@ -44,12 +44,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: ddhruvgupta/distance-frontend:latest
+    image: ddhruvgupta/distance-frontend:deploy
     networks:
       - app-network
     ports:
       - "3000:80"
-
 volumes:
   bain_mysql_data:
 

@@ -1,0 +1,58 @@
+services:
+  db:
+    image: mysql:8.0
+    platform: linux/amd64
+    container_name: db
+    networks:
+      - app-network
+    environment:
+      MYSQL_ROOT_PASSWORD: rootdev
+      MYSQL_DATABASE: dev_db
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: devpass
+    ports:
+      - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    command: 
+      - --innodb-buffer-pool-size=256M
+      - --performance-schema=OFF
+      - --default-authentication-plugin=mysql_native_password
+
+  flask:
+    image: ddhruvgupta/distance-flask
+    pull_policy: always
+    container_name: flask
+    networks:
+      - app-network
+    environment:
+      FLASK_ENV: development
+      FLASK_APP: app:create_app
+      DB_ROOT_PASSWORD: rootdev
+      DB_NAME: dev_db
+      DB_USER: dev_user
+      DB_PASSWORD: devpass
+      DATABASE_URL: mysql+pymysql://dev_user:devpass@db:3306/dev_db
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  frontend:
+    image: ddhruvgupta/distance-frontend
+    pull_policy: always
+    container_name: frontend
+    networks:
+      - app-network
+    ports:
+      - "3000:80"
+    depends_on:
+      - flask
+
+networks:
+  app-network:
+    driver: bridge

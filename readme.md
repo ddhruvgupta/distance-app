@@ -45,7 +45,7 @@ If running outside docker:
 for backend end:
 
 1. cd app
-2. activate venv: `source venv/bin/activate`
+2. activate venv: `bash: source .venv/Scripts/activate` `ps .\venv\Scripts\Activate`
 3. install dependencies in venv: `pip install -r requirements.txt`
 4. flask run
 
@@ -91,10 +91,11 @@ The makefile has commands to make a new build. The Username is currently hardcod
 
 ## Future Work ##
 
-1. CORS config for backend
+1. makes CORS config for backend more strict.
 2. API route versioning.
 3. Create Base Controller and use that in other controllers.
-4. Clean up / refactoring of front end:
+4. limit the number of decimals in the distance.
+5. Invalid queries are also logged into the database, needs to be filtered.
+6. Clean up / refactoring of front end:
     - Use Hooks
     - Single Responsibility Principle
-    -

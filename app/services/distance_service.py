@@ -2,6 +2,7 @@ from geopy.distance import geodesic
 from app.clients.geocoding_client import GeocodingClient
 from app.repositories.distance_repository import DistanceRepository
 from icecream import ic
+from bleach import clean
 
 class DistanceService:
     def __init__(self, geocoding_client: GeocodingClient, distance_repository: DistanceRepository):
@@ -25,6 +26,10 @@ class DistanceService:
 
     def calculate_and_log_distance(self, address1, address2):
         """Calculate the distance and log the query into the database."""
+        # Sanitize inputs to prevent XSS
+        address1 = clean(address1, strip=True)
+        address2 = clean(address2, strip=True)
+
         distance = self.calculate_distance(address1, address2)
 
         # Delegate logging to the repository

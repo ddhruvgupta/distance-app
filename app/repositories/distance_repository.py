@@ -2,6 +2,7 @@ from app.models.query_model import DistanceQuery
 from contextlib import contextmanager
 from app.db.session import get_db
 
+# Using SQL Alchemy for database interaction to prevent sql injection
 class DistanceRepository:
     def __init__(self):
         """

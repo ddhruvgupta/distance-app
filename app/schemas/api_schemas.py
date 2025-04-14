@@ -1,8 +1,18 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
+
+# validate input for security
 
 class DistanceRequestSchema(Schema):
-    address1 = fields.Str(required=True, description="First address")
-    address2 = fields.Str(required=True, description="Second address")
+    address1 = fields.Str(
+        required=True,
+        validate=validate.Length(min=1, max=255),
+        description="First address"
+    )
+    address2 = fields.Str(
+        required=True,
+        validate=validate.Length(min=1, max=255),
+        description="Second address"
+    )
 
 class DistanceResponseSchema(Schema):
     distance = fields.Float(description="Distance in miles")

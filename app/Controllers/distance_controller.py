@@ -7,6 +7,7 @@ from contextlib import contextmanager
 import logging
 from app.repositories.distance_repository import DistanceRepository
 from app.services.distance_service import DistanceService
+from bleach import clean
 
 logger = logging.getLogger(__name__)
 
@@ -33,11 +34,15 @@ class DistanceController:
     def calculate_distance(self, data):
         """Calculate distance between two addresses."""
         try:
+            # Log the incoming request data
             logger.info(f"Incoming request data: {data}")
-            distance = self.distance_service.calculate_and_log_distance(
-                data["address1"],
-                data["address2"]
-            )
+
+            # Sanitize inputs
+            address1 = clean(data["address1"], strip=True)
+            address2 = clean(data["address2"], strip=True)
+
+            # Calculate and log the distance
+            distance = self.distance_service.calculate_and_log_distance(address1, address2)
 
             logger.info(f"Distance calculated: {distance} miles")
             return jsonify({"distance_miles": distance})

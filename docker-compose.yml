@@ -37,6 +37,15 @@ services:
     ports:
     - "5000:5000"
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    ports:
+      - "3000:80"
+
 volumes:
   bain_mysql_data:
 

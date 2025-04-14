@@ -33,6 +33,7 @@ class DistanceController:
     def calculate_distance(self, data):
         """Calculate distance between two addresses."""
         try:
+            logger.info(f"Incoming request data: {data}")
             distance = self.distance_service.calculate_and_log_distance(
                 data["address1"],
                 data["address2"]
@@ -57,9 +58,14 @@ class DistanceController:
             description="Takes two addresses and returns the distance between them in miles"
         )
         def calculate(data): 
-            result = self.calculate_distance(data)
-            logger.info(f"Distance calculation result: {result}")
-            return result
+            try:
+                logger.info(f"Received request payload: {data}")
+                result = self.calculate_distance(data)
+                logger.info(f"Distance calculation result: {result}")
+                return result
+            except Exception as e:
+                logger.error(f"Error processing request: {str(e)}")
+                raise
 
 
 # Dependency Injection Setup

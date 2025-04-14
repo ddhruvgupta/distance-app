@@ -1,67 +1,53 @@
-# New Setup
+# Run Instructions #
 
-Create Env
+This project has 3 parts:
 
-```
-> mkdir myproject
-> cd myproject
-> py -3 -m venv C:\Users\Dhruv-PC\Downloads\virtual-envs\LawGateWebApiV2
+- Backend: Python Flask
+- Frontend: ReactJS
+- Database: MySQL
 
-py -3 -m venv .venv (orginally used)
-```
+each of these is in a docker container, and running docker compose up will start running them.
 
-Activate env
+- `docker compose up`: start running the docker containers
+- `docker compose up --build`: Build and run
+- `docker compose up -d`: Run in detached mode (background)
 
-```C:\Users\Dhruv-PC\Downloads\virtual-envs\LawGateWebApiV2\Scripts\activate```
+After running docker compose up, wait a couple of minutes since the database takes a little while to come up.
 
-Install Flask
+If the database is new, it will not contain any tables. These need to be populated using flask migrate.
+which needs to run outside the container.
 
-```pip install Flask```
+If running outside docker:
 
-```pip freeze > requirements.txt
-pip install -r requirements.txt
-```
+for backend end:
 
-## Restart App ##
+1. cd app
+2. activate venv: `source venv/bin/activate`
+3. install dependencies in venv: `pip install -r requirements.txt`
+4. flask run
 
-=> just choose the python interpreter in VSCode, set it up to use the venv that was setup above.
+for front end:
 
-1. create virtual env in the downloads directory
-2. activate env
-3. install dependencies from `requirequirements.txt`
+1. cd frontend
+2. npm install
+3. npm start
 
-TODO: Can we rename the virtual environment to something other than venv ?
-
-`flask --app helloWorld.py run`
-`flask --app app.py --env-file .env.dev run`
-
-docker compose --env-file .env.dev up --build
-
-## Troubleshooting database container ##
-
-1. Login to container:
-`docker exec -it <container_id_or_name> bash`
-or use sh instead of bash
-
-2. Login to mysql
-`mysql -u root -p`
-
-password is in the .env file.
-
-3.Test DB connection
-SHOW DATABASES;
-
-4.Check permissions for DB_USER:
-
-USE mysql;
-SELECT User, Host, authentication_string FROM user;
+for database: It has to be run from docker, use `docker compose up db` to run just the database
 
 ## Flask Migrate Instructions
 
-flask db migrate -m "Initial migration"
-flask db upgrade
+1. activate the virtual environment
 
-# makefile commands
+    `source venv/bin/activate`
 
-make ENV_FILE=.env.prod up
-make ENV_FILE=.env.prod docker-upgrade
+2. install all dependencies into the virtualenv
+
+    `pip install -r requirements.txt`
+
+3. migrate the database.
+
+    `flask db upgrade`
+
+    If the migrations/versions are not present then run, they need to be initialized before the upgrade command:
+
+    `flask db init`  

@@ -1,7 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_smorest import Api
+from flask_cors import CORS
 import os
 import logging
 
@@ -9,7 +10,7 @@ from app.clients.geocoding_client import GeocodingClient
 from app.repositories.distance_repository import DistanceRepository
 
 logging.basicConfig(
-    level=logging.INFO,  # Set the log level to INFO
+    level=logging.DEBUG,  # Set the log level to INFO
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
@@ -18,6 +19,7 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
+    CORS(app, resources={r"/*": {"origins": ["http://localhost:3000"]}})
 
     # Database configuration
     database_url = os.getenv("DATABASE_URL")
@@ -67,6 +69,13 @@ def create_app():
 
     api.register_blueprint(distance_bp)
     api.register_blueprint(history_bp)
+
+    # Flask should not handle CORS preflight requests automatically
+    # because we are using Flask-CORS to handle them manually.
+    @app.before_request
+    def handle_options_request():
+        if request.method == "OPTIONS":
+            return '', 204
 
     @app.route("/")
     def index():

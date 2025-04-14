@@ -14,3 +14,4 @@ icecream
 flask-smorest
 apispec[yaml]==6.3.1
 tenacity==8.2.2
+flask-cors==4.0.0

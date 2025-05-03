@@ -24,7 +24,7 @@ services:
       - --default-authentication-plugin=mysql_native_password
 
   flask:
-    image: ddhruvgupta/distance-flask:deploy
+    image: ddhruvgupta/distance-flask
     pull_policy: always
     container_name: flask
     networks:
